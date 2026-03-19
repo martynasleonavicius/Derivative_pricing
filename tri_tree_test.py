@@ -13,31 +13,42 @@ d = 0    #dividend rate
 K = 100     #Strike
 S = 100     #Spot
 sigma = 0.3 #volatility
-layers = 1000  #Layers of the binary tree. Could be interpreted as the number of time steps
 
-#Let us investigate the convergence between the tri- and binomial models to black-scholes
+#Let us investigate the convergence between the tri- and binomial models to Black-Scholes
 trinomial = []
-binomial = []
-bsPrice = []
-range_object = np.array(range(85, 110))
-for S in range_object:
-    trinomial.append(tt.callOptionPriceCalculator(T, r, d, K, S, sigma, layers))
-    binomial.append(bt.callOptionPriceCalculator(T, r, d, K, S, sigma, layers))
-    bsPrice.append(bsop.call(T, r, d, K, S, sigma))
+binomial= []
+
+bsPrice = bsop.call(T, r, d, K, S, sigma)
+
+
+range_object = np.array(range(1, 11))
+for layer in range_object:
+    t = tt.callOptionPriceCalculator(T, r, d, K, S, sigma, layer)
+    b = bt.callOptionPriceCalculator(T, r, d, K, S, sigma, layer)
     
+    trinomial.append(t - bsPrice)
+    binomial.append(b - bsPrice)
+    
+
 trinomial = np.array(trinomial)
 binomial = np.array(binomial)
-bsPrice = np.array(bsPrice)
-plt.plot(range_object, trinomial - bsPrice, label = "trinomial call price - analytical call price")
-plt.plot(range_object, binomial - bsPrice, label = "binomial call price - analytical call price")
 
-plt.ylabel("Option price difference")
-plt.xlabel("Underlying price")
-plt.title(f"Trinomial and binomial price convergence\ncomparison to Black-Scholes model \nMaturity of {T}, Strike {K}")
+
+plt.plot(range_object*100, trinomial, label = "trinomial tree difference")
+plt.plot(range_object*100, binomial, label = "binomial tree difference")
+
+
+
+plt.ylabel("Difference to vanilla call")
+plt.xlabel("Number of layers in a tree")
+plt.hlines(0, 100, 1000, linestyles=':', color='red')
+plt.title(f"Demonstration of binomial and trinomial tree convergence to\nBlack-Scholes expression for at-the-money call option\nS=K=100")
 plt.legend()
 plt.show()
 
-#NB the graph proves that trinomial model approximates the Black-Scholes model better
+#NB Trinomial tree method has the lowest error over the whole range of layers and approaches Black-Scholes
+# price monotonically from below, whereas the binomial tree oscillates around the Black-Scholes price.
+# Thus trinomial tree approximates Black-Scholes prices better than binomial tree at the same layer count.
 
 
 
