@@ -31,6 +31,39 @@ Analytical closed-form pricing for:
 
 The cumulative normal distribution is approximated using the polynomial method from Joshi (Appendix B.2.2, pg. 437).
 
+#### Put and Call Prices from Black-Scholes Equations
+Black-Scholes model provides a way to price puts and calls in a world, where you can continuously and freely trade. There are also other ways to price these options, with one of them being Monte Carlo simulation. In the simulation, computer draws normally distributed numbers with mean 0 and standard deviation of 1 to generate stock's price when the European option expires. The final price then determines the option's payoff, which in turn influences options values.
+![Call Value Convergence](option_images/MC_put_convergence.png)
+![Put Value Convergence](option_images/MC_call_convergence.png)
+As you can see in these graphs, Monte Carlo can approximate Black-Scholes valuation fairly well with just around 1000 simulation and almost no noticible difference with 100000 simulations.
+
+#### Call-Put Parity
+Call-Put parity describes the relationship between call, put, and forwad contract prices, which states that Call - Put = Forward.
+![Call-Put Parity](option_images/forward_parity.png)
+While the line does show a single line, that is because Call - Put line is hidden behind Forward price curve. This graph thus shows that Call, Put, and Forward price calculating functions adhere to this parity.
+
+#### Covered Calls and Protective Puts
+Another well known principle is that a portfolio of a stock and call it's (covered call) replicates the payoff of a government's zero-coupon bond and stock's put. I.E. Stock + Call = Bond + Put.
+![Call-Put-Forward Parity](option_images/cov_call_prot_put.png)
+Similarly to the Call-Put graph above, protective put completely covers covered calls' payoff, thus showing that this principle is being upheld by the functions.
+
+
+### The Greeks (greek.py)
+Contains functions of analytically derived call and put greeks. These greeks are:
+- Delta
+- Gamma
+- Vega
+
+#### Showing Greeks
+A very important part of option investing is to know how sensitive option's value is to the change of stock value. That is why the Greeks were defined. These greeks are delta (options's price derivative with respect to stock's price), gamma (delta derivative with respect to stock's price), and vega (option's price derivative with respect to implied volatility). These derivatives are useful when trying to contruct a theoretically perfectly hedged protfolio of various positions on a stock and related derivatives.
+![Call's Delta](option_images/Call_delta.png)
+![Call's Gamma](option_images/call_gamma.png)
+![Call's Vega](option_images/call_vega.png)
+![Put's Delta](option_images/Put_delta.png)
+![Put's Gamma](option_images/put_gamma.png)
+![Put's Vega](option_images/put_vega.png)
+Graph's above visually represent how these greeks change as the stock's price changes. Notice that Put's gamma and vega behave like Call's gamma and vega, but only mirrored around the strike. 
+
 ### Barrier Options (`call_knock_in_and_out_european_option.py`)
 Analytical and Monte Carlo pricing for:
 - Down-and-in calls
